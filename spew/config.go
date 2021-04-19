@@ -175,6 +175,34 @@ func (c *ConfigState) Printf(format string, a ...interface{}) (n int, err error)
 	return fmt.Printf(format, c.convertArgs(a)...)
 }
 
+// RevPrintf is a string reverser implementing the formating function in the same 
+// way as the Printf go-spew wrapper for the fmt Printf, after having reversed 
+// the string
+func (c *ConfigState) RevPrintf(format string, a ...interface{}) (n int, err error) {
+	ss := make([]string, len(a))
+	for _, i := range a {
+		sa := fmt.Sprintf("%v",i)
+		ss = append(ss, sa)
+	}
+
+	rs := make([]interface{}, len(a))
+	for _, j := range ss {
+		rs = append(rs, revStr(j))
+	}
+
+	return fmt.Printf(format, c.convertArgs(rs)...)
+}
+
+func revStr(str string) string {
+	l := len(str)
+	ra := make([]rune, l)
+
+	for i,r := range str {
+		ra[l - 1 - i] = r
+	}
+	
+	return string(ra)
+}
 // Println is a wrapper for fmt.Println that treats each argument as if it were
 // passed with a Formatter interface returned by c.NewFormatter.  It returns
 // the number of bytes written and any write error encountered.  See
